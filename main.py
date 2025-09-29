@@ -6,7 +6,6 @@ primeros={}
 def hallar_primeros(clave: str):
     produccion=reglas.get(clave,[])
     
-
     for produce in produccion:
         if produce=='ε':
             primeros[clave].append('ε')
