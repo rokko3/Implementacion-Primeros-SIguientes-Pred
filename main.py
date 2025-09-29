@@ -1,26 +1,27 @@
 import sys
 reglas={}
-prueba={'a':['a','b']}
 primeros={}
 
 
-def primeros(clave: str):
-    if 'ε' in reglas.get(str):
-        pass
+def hallar_primeros(clave: str):
+    produccion=reglas.get(clave,[])
+    
 
-    for produccion in reglas.get(str):
-
-
-        if produccion==ε:
+    for produce in produccion:
+        if produce=='ε':
+            primeros[clave].append('ε')
+        else:
             pass
+            
 
-        pass        
+
+     
     return
 
-def siguientes():
+def hallar_siguientes():
     return
 
-def prediccion():
+def hallar_prediccion():
     return
 
 
@@ -49,12 +50,10 @@ def main():
                     alternativas=[alt.strip() for alt in parte_derecha.split("|")]
                         
                     for alt in alternativas:
-                        for p in alt.split():
-                            if p!="":
-                                reglas.setdefault(parte_izquierda, []).append(p)
-                Exception("Las reglas tienen que estar definidas mediante ->")
-
-        
+                        produccion=[p for p in alt.split() if p!=""]
+                        reglas.setdefault(parte_izquierda, []).append(produccion)
+                else:
+                    raise Exception("Las reglas tienen que estar definidas mediante ->")
     except FileNotFoundError:
         print("Archivo no encontrado.")
     except Exception as e:
@@ -65,8 +64,8 @@ if __name__ == "__main__":
     main()
     for no_terminal in reglas.keys():
 
-        primeros.setdefault(no_terminal,[]).append(no_terminal)
+
+        primeros[no_terminal]=[]
 
     print(reglas)
-    print(prueba)
-    print(prueba.get('a'))
+    print(primeros.keys())
