@@ -66,31 +66,139 @@ El programa muestra:
 ### Ejemplo de Uso
 
 ```bash
-python analizador.py reglas.txt
+python analizador.py gramatica1.txt
+python analizador.py gramatica2.txt
 ```
 
-### Ejemplo de Salida
+### Ejemplos de Salida
 
+#### Ejemplo 1: Gramática 1
+
+**Contenido de gramatica1.txt:**
 ```
-Gramática cargada de: reglas.txt
-A -> ['a d c', 'c']
-B -> ['D']
+S -> A uno B C | S dos
+A -> B C D | A tres | ε
+B -> D cuatro C tres | ε
+C -> cinco D B | ε
+D -> seis | ε
+```
+
+**Salida del programa:**
+```
+Gramática cargada de: gramatica1.txt
+S -> ['A uno B C', 'S dos']
+A -> ['B C D', 'A tres', 'ε']
+B -> ['D cuatro C tres', 'ε']
+C -> ['cinco D B', 'ε']
+D -> ['seis', 'ε']
 
 --- PRIMEROS ---
-PRIMEROS(a) = {'a'}
-PRIMEROS(d) = {'d'}
-PRIMEROS(c) = {'c'}
-PRIMEROS(D) = {'D'}
-PRIMEROS(A) = {'a', 'c'}
-PRIMEROS(B) = {'D'}
+PRIMEROS(uno) = {'uno'}
+PRIMEROS(dos) = {'dos'}
+PRIMEROS(tres) = {'tres'}
+PRIMEROS(cuatro) = {'cuatro'}
+PRIMEROS(cinco) = {'cinco'}
+PRIMEROS(seis) = {'seis'}
+PRIMEROS(S) = {'cuatro', 'tres', 'uno', 'cinco', 'seis'}
+PRIMEROS(A) = {'cuatro', 'ε', 'tres', 'cinco', 'seis'}
+PRIMEROS(B) = {'cuatro', 'seis', 'ε'}
+PRIMEROS(D) = {'seis', 'ε'}
+PRIMEROS(C) = {'cinco', 'ε'}
 
 --- SIGUIENTES ---
-SIGUIENTES(A) = {'$'}
-SIGUIENTES(B) = set()
+SIGUIENTES(S) = {'dos', '$'}
+SIGUIENTES(A) = {'tres', 'uno'}
+SIGUIENTES(B) = {'dos', 'tres', 'uno', '$', 'cinco', 'seis'}
+SIGUIENTES(C) = {'tres', 'uno', 'dos', '$', 'seis'}
+SIGUIENTES(D) = {'dos', 'cuatro', 'tres', 'uno', '$', 'seis'}
 
 --- PREDICCIÓN ---
-PRED(A -> a d c) = {'a'}
-PRED(A -> c) = {'c'}
-PRED(B -> D) = {'D'}
+PRED(S -> A uno B C) = {'tres', 'uno', 'cinco', 'cuatro', 'seis'}
+PRED(S -> S dos) = {'tres', 'uno', 'cinco', 'cuatro', 'seis'}
+PRED(A -> B C D) = {'tres', 'uno', 'cinco', 'cuatro', 'seis'}
+PRED(A -> A tres) = {'tres', 'cinco', 'cuatro', 'seis'}
+PRED(A -> ε) = {'tres', 'uno'}
+PRED(B -> D cuatro C tres) = {'cuatro', 'seis'}
+PRED(B -> ε) = {'tres', 'uno', 'dos', '$', 'cinco', 'seis'}
+PRED(C -> cinco D B) = {'cinco'}
+PRED(C -> ε) = {'tres', 'uno', 'dos', '$', 'seis'}
+PRED(D -> seis) = {'seis'}
+PRED(D -> ε) = {'tres', 'uno', 'dos', '$', 'cuatro', 'seis'}
 ```
+
+#### Ejemplo 2: Gramática 2
+
+**Contenido de gramatica2.txt:**
+```
+S -> A B uno
+A -> dos B | ε
+B -> C D | tres | ε
+C -> cuatro A B | cinco
+D -> seis | ε
+```
+
+**Salida del programa:**
+```
+Gramática cargada de: gramatica2.txt
+S -> ['A B uno']
+A -> ['dos B', 'ε']
+B -> ['C D', 'tres', 'ε']
+C -> ['cuatro A B', 'cinco']
+D -> ['seis', 'ε']
+
+--- PRIMEROS ---
+PRIMEROS(uno) = {'uno'}
+PRIMEROS(dos) = {'dos'}
+PRIMEROS(tres) = {'tres'}
+PRIMEROS(cuatro) = {'cuatro'}
+PRIMEROS(cinco) = {'cinco'}
+PRIMEROS(seis) = {'seis'}
+PRIMEROS(S) = {'tres', 'cinco', 'cuatro', 'dos', 'uno'}
+PRIMEROS(A) = {'dos', 'ε'}
+PRIMEROS(B) = {'cinco', 'tres', 'cuatro', 'ε'}
+PRIMEROS(C) = {'cinco', 'cuatro'}
+PRIMEROS(D) = {'seis', 'ε'}
+
+--- SIGUIENTES ---
+SIGUIENTES(S) = {'$'}
+SIGUIENTES(A) = {'cinco', 'cuatro', 'tres', 'seis', 'uno'}
+SIGUIENTES(B) = {'cinco', 'cuatro', 'tres', 'seis', 'uno'}
+SIGUIENTES(C) = {'cinco', 'cuatro', 'tres', 'seis', 'uno'}
+SIGUIENTES(D) = {'cinco', 'cuatro', 'tres', 'seis', 'uno'}
+
+--- PREDICCIÓN ---
+PRED(S -> A B uno) = {'cinco', 'tres', 'cuatro', 'uno', 'dos'}
+PRED(A -> dos B) = {'dos'}
+PRED(A -> ε) = {'seis', 'cinco', 'cuatro', 'tres', 'uno'}
+PRED(B -> C D) = {'cinco', 'cuatro'}
+PRED(B -> tres) = {'tres'}
+PRED(B -> ε) = {'seis', 'cinco', 'cuatro', 'tres', 'uno'}
+PRED(C -> cuatro A B) = {'cuatro'}
+PRED(C -> cinco) = {'cinco'}
+PRED(D -> seis) = {'seis'}
+PRED(D -> ε) = {'seis', 'cinco', 'cuatro', 'tres', 'uno'}
+```
+
+## Características Técnicas
+
+- **Lenguaje**: Python 3
+- **Codificación**: UTF-8 para soporte de caracteres especiales
+- **Algoritmo**: Implementación clásica de punto fijo para cálculo de conjuntos
+- **Manejo de ε**: Soporte completo para producciones vacías
+- **Detección de convergencia**: El algoritmo itera hasta que no hay más cambios
+
+## Aplicaciones
+
+Este analizador es útil para:
+- Construcción de analizadores sintácticos LL(1)
+- Verificación de gramáticas libres de contexto
+- Análisis de ambigüedad en gramáticas
+- Estudios académicos de teoría de compiladores
+
+## Archivos incluidos
+
+- `analizador.py`: Programa principal que implementa los algoritmos
+- `gramatica1.txt`: Ejemplo de gramática compleja con producciones recursivas
+- `gramatica2.txt`: Ejemplo de gramática simple con diferentes tipos de producciones
+- `reglas.txt`: Gramática básica de ejemplo
 
