@@ -179,26 +179,3 @@ PRED(D -> seis) = {'seis'}
 PRED(D -> ε) = {'seis', 'cinco', 'cuatro', 'tres', 'uno'}
 ```
 
-## Características Técnicas
-
-- **Lenguaje**: Python 3
-- **Codificación**: UTF-8 para soporte de caracteres especiales
-- **Algoritmo**: Implementación clásica de punto fijo para cálculo de conjuntos
-- **Manejo de ε**: Soporte completo para producciones vacías
-- **Detección de convergencia**: El algoritmo itera hasta que no hay más cambios
-
-## Aplicaciones
-
-Este analizador es útil para:
-- Construcción de analizadores sintácticos LL(1)
-- Verificación de gramáticas libres de contexto
-- Análisis de ambigüedad en gramáticas
-- Estudios académicos de teoría de compiladores
-
-## Archivos incluidos
-
-- `analizador.py`: Programa principal que implementa los algoritmos
-- `gramatica1.txt`: Ejemplo de gramática compleja con producciones recursivas
-- `gramatica2.txt`: Ejemplo de gramática simple con diferentes tipos de producciones
-- `reglas.txt`: Gramática básica de ejemplo
-
