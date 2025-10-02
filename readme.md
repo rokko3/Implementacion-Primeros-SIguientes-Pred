@@ -1,1 +1,96 @@
+# Analizador de Gramáticas - Conjuntos PRIMEROS, SIGUIENTES y PREDICCIÓN
+
 ## Hecho por: William Alfonso, Samuel Leyton, Felipe Morales
+
+## Descripción
+
+Este proyecto implementa un analizador de gramaticas libres de contexto que calcula automáticamente los conjuntos **PRIMEROS**, **SIGUIENTES** y **PREDICCION** para una gramatica dada. Estos conjuntos son fundamentales en la construccion de analizadores sintacticos predictivos (parsers LL(1)).
+
+## Funcionamiento del Programa
+
+### Entrada
+El programa recibe como entrada un archivo de texto que contiene las reglas de produccion de una gramatica en el siguiente formato:
+```
+A -> a d c
+A -> c  
+B -> D
+```
+
+### Componentes Principales
+
+#### 1. **Lectura de Gramatica** (`leer_gramatica`)
+- Lee las reglas de producción desde un archivo de texto
+- Parsea cada linea separando la parte izquierda (no terminal) de la derecha (produccion)
+- Maneja multiples alternativas separadas por el símbolo `|`
+- Identifica automaticamente el símbolo inicial 
+- Retorna un diccionario donde cada clave es un no terminal y el valor es una lista de producciones
+
+#### 2. **Calculo de PRIMEROS** (`calcular_primeros`)
+El conjunto PRIMEROS(X) contiene todos los simbolos terminales que pueden aparecer al inicio de las cadenas derivadas de X.
+
+**Algoritmo:**
+- **Inicializacion**: Los terminales se incluyen en su propio conjunto PRIMEROS
+- **Iteración hasta convergencia**:
+  - Para cada producción A → α:
+    - Si α comienza con terminal: añadir ese terminal a PRIMEROS(A)
+    - Si α comienza con no terminal B: añadir PRIMEROS(B) - {ε} a PRIMEROS(A)
+    - Si todos los símbolos de α pueden derivar ε: añadir ε a PRIMEROS(A)
+
+#### 3. **Calculo de SIGUIENTES** (`calcular_siguientes`)
+El conjunto SIGUIENTES(A) contiene todos los terminales que pueden aparecer inmediatamente después del no terminal A en alguna forma sentencial.
+
+**Algoritmo:**
+- **Inicializacion**: Añadir $ al conjunto SIGUIENTES del símbolo inicial
+- **Iteración hasta convergencia**:
+  - Para cada producción A → αBβ (donde B es no terminal):
+    - Añadir PRIMEROS(β) - {ε} a SIGUIENTES(B)
+    - Si β puede derivar ε: añadir SIGUIENTES(A) a SIGUIENTES(B)
+  - Para producciones A → αB: añadir SIGUIENTES(A) a SIGUIENTES(B)
+
+#### 4. **Calculo de PREDICCIÓN** (`calcular_prediccion`)
+El conjunto PREDICCIÓN de una producción A → α contiene todos los terminales que pueden aparecer al inicio de las cadenas derivadas cuando se aplica esta produccion.
+
+**Algoritmo:**
+- Para cada produccion A → α:
+  - Si α no puede derivar ε: PRED(A → α) = PRIMEROS(α)
+  - Si α puede derivar ε: PRED(A → α) = PRIMEROS(α) ∪ SIGUIENTES(A)
+
+### Salida del Programa
+
+El programa muestra:
+1. **Gramática cargada**: Visualización de todas las producciones leídas
+2. **Conjuntos PRIMEROS**: Para cada símbolo de la gramática
+3. **Conjuntos SIGUIENTES**: Para cada no terminal
+4. **Conjuntos PREDICCIÓN**: Para cada producción individual
+
+### Ejemplo de Uso
+
+```bash
+python analizador.py reglas.txt
+```
+
+### Ejemplo de Salida
+
+```
+Gramática cargada de: reglas.txt
+A -> ['a d c', 'c']
+B -> ['D']
+
+--- PRIMEROS ---
+PRIMEROS(a) = {'a'}
+PRIMEROS(d) = {'d'}
+PRIMEROS(c) = {'c'}
+PRIMEROS(D) = {'D'}
+PRIMEROS(A) = {'a', 'c'}
+PRIMEROS(B) = {'D'}
+
+--- SIGUIENTES ---
+SIGUIENTES(A) = {'$'}
+SIGUIENTES(B) = set()
+
+--- PREDICCIÓN ---
+PRED(A -> a d c) = {'a'}
+PRED(A -> c) = {'c'}
+PRED(B -> D) = {'D'}
+```
+
